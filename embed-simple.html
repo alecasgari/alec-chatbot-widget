@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simple Widget Embed</title>
+    <!-- Alec ChatBot Widget CSS -->
+    <link rel="stylesheet" href="https://chat.alecasgari.com/widget.css">
+</head>
+<body>
+    <h1>My Website</h1>
+    <p>This is a simple example of how to embed the Alec ChatBot widget.</p>
+    
+    <!-- Alec ChatBot Widget Script -->
+    <script src="https://chat.alecasgari.com/widget.iife.js"></script>
+    <script>
+        // Initialize the chatbot when the page loads
+        document.addEventListener('DOMContentLoaded', function() {
+            if (window.AlecChatBot) {
+                const chatbot = new (window.AlecChatBot.default || window.AlecChatBot)({
+                    webhookUrl: 'https://n8n.alecasgari.com/webhook/2531f7c2-f516-435e-9f56-9ed98b3d673a',
+                    theme: {
+                        primaryColor: '#059669',
+                        position: 'bottom-right',
+                        title: 'AI Assistant',
+                        placeholder: 'Type your message...'
+                    },
+                    features: {
+                        resizable: true,
+                        typingAnimation: true,
+                        connectionStatus: true,
+                        autoOpen: false
+                    }
+                });
+                chatbot.init();
+            }
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Advanced Widget Embed</title>
+    <!-- Alec ChatBot Widget CSS -->
+    <link rel="stylesheet" href="https://chat.alecasgari.com/widget.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            padding: 40px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Advanced Widget Integration</h1>
+        <p>This example shows how to customize the Alec ChatBot widget with different settings.</p>
+        
+        <h2>Features:</h2>
+        <ul>
+            <li>Customizable theme colors</li>
+            <li>Different positions</li>
+            <li>Callback functions for analytics</li>
+            <li>Auto-open option</li>
+        </ul>
+    </div>
+    
+    <!-- Alec ChatBot Widget Script -->
+    <script src="https://chat.alecasgari.com/widget.iife.js"></script>
+    <script>
+        // Advanced configuration
+        const chatbotConfig = {
+            webhookUrl: 'https://n8n.alecasgari.com/webhook/2531f7c2-f516-435e-9f56-9ed98b3d673a',
+            theme: {
+                primaryColor: '#3b82f6', // Blue color
+                position: 'bottom-right',
+                title: 'Support Assistant',
+                placeholder: 'How can I help you?'
+            },
+            features: {
+                resizable: true,
+                typingAnimation: true,
+                connectionStatus: true,
+                autoOpen: false
+            },
+            callbacks: {
+                onMessage: function(message) {
+                    console.log('User sent message:', message);
+                    // Send to analytics
+                    if (typeof gtag !== 'undefined') {
+                        gtag('event', 'chat_message', {
+                            'event_category': 'engagement',
+                            'event_label': 'widget'
+                        });
+                    }
+                },
+                onOpen: function() {
+                    console.log('Chat opened');
+                    // Track chat open
+                    if (typeof gtag !== 'undefined') {
+                        gtag('event', 'chat_open', {
+                            'event_category': 'engagement',
+                            'event_label': 'widget'
+                        });
+                    }
+                },
+                onClose: function() {
+                    console.log('Chat closed');
+                },
+                onError: function(error) {
+                    console.error('Chatbot error:', error);
+                }
+            }
+        };
+
+        // Initialize chatbot
+        function initChatbot() {
+            if (window.AlecChatBot) {
+                const AlecChatBotClass = window.AlecChatBot.default || window.AlecChatBot;
+                const chatbot = new AlecChatBotClass(chatbotConfig);
+                chatbot.init();
+                
+                // Store reference for external control
+                window.chatbotInstance = chatbot;
+                
+                console.log('Chatbot initialized successfully!');
+            } else {
+                console.error('AlecChatBot not found!');
+            }
+        }
+
+        // Initialize when DOM is ready
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', initChatbot);
+        } else {
+            initChatbot();
+        }
+
+        // Example: Programmatically open chat
+        function openChat() {
+            if (window.chatbotInstance) {
+                window.chatbotInstance.open();
+            }
+        }
+
+        // Example: Send message programmatically
+        function sendMessage(message) {
+            if (window.chatbotInstance) {
+                window.chatbotInstance.sendMessage(message);
+            }
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,133 @@
+<!--
+  Alec ChatBot Widget - Shopify Integration
+  
+  Add this code to your Shopify theme's layout/theme.liquid file
+  before the closing </body> tag
+-->
+
+<!-- Alec ChatBot Widget CSS -->
+<link rel="stylesheet" href="https://chat.alecasgari.com/widget.css">
+
+<!-- Alec ChatBot Widget Script -->
+<script src="https://chat.alecasgari.com/widget.iife.js"></script>
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    if (window.AlecChatBot) {
+      const chatbot = new (window.AlecChatBot.default || window.AlecChatBot)({
+        webhookUrl: 'https://n8n.alecasgari.com/webhook/2531f7c2-f516-435e-9f56-9ed98b3d673a',
+        theme: {
+          primaryColor: '{{ settings.chatbot_primary_color | default: "#059669" }}',
+          position: '{{ settings.chatbot_position | default: "bottom-right" }}',
+          title: '{{ settings.chatbot_title | default: "AI Assistant" }}',
+          placeholder: '{{ settings.chatbot_placeholder | default: "Type your message..." }}'
+        },
+        features: {
+          resizable: {{ settings.chatbot_resizable | default: true }},
+          typingAnimation: {{ settings.chatbot_typing_animation | default: true }},
+          connectionStatus: {{ settings.chatbot_connection_status | default: true }},
+          autoOpen: {{ settings.chatbot_auto_open | default: false }}
+        },
+        callbacks: {
+          onMessage: function(message) {
+            console.log('User sent message:', message);
+            
+            // Shopify Analytics
+            if (typeof gtag !== 'undefined') {
+              gtag('event', 'chat_message', {
+                'event_category': 'engagement',
+                'event_label': 'widget'
+              });
+            }
+            
+            // Facebook Pixel
+            if (typeof fbq !== 'undefined') {
+              fbq('track', 'Contact');
+            }
+          },
+          onOpen: function() {
+            console.log('Chat opened');
+            
+            if (typeof gtag !== 'undefined') {
+              gtag('event', 'chat_open', {
+                'event_category': 'engagement',
+                'event_label': 'widget'
+              });
+            }
+          },
+          onClose: function() {
+            console.log('Chat closed');
+          },
+          onError: function(error) {
+            console.error('Chatbot error:', error);
+          }
+        }
+      });
+      chatbot.init();
+    }
+  });
+</script>
+
+<!--
+  Optional: Add these settings to your theme's settings_schema.json
+  to allow customization from the admin panel:
+  
+  {
+    "name": "Alec ChatBot Widget",
+    "settings": [
+      {
+        "type": "color",
+        "id": "chatbot_primary_color",
+        "label": "Primary Color",
+        "default": "#059669"
+      },
+      {
+        "type": "select",
+        "id": "chatbot_position",
+        "label": "Position",
+        "options": [
+          { "value": "bottom-right", "label": "Bottom Right" },
+          { "value": "bottom-left", "label": "Bottom Left" },
+          { "value": "top-right", "label": "Top Right" },
+          { "value": "top-left", "label": "Top Left" }
+        ],
+        "default": "bottom-right"
+      },
+      {
+        "type": "text",
+        "id": "chatbot_title",
+        "label": "Widget Title",
+        "default": "AI Assistant"
+      },
+      {
+        "type": "text",
+        "id": "chatbot_placeholder",
+        "label": "Placeholder Text",
+        "default": "Type your message..."
+      },
+      {
+        "type": "checkbox",
+        "id": "chatbot_resizable",
+        "label": "Resizable",
+        "default": true
+      },
+      {
+        "type": "checkbox",
+        "id": "chatbot_typing_animation",
+        "label": "Typing Animation",
+        "default": true
+      },
+      {
+        "type": "checkbox",
+        "id": "chatbot_connection_status",
+        "label": "Connection Status",
+        "default": true
+      },
+      {
+        "type": "checkbox",
+        "id": "chatbot_auto_open",
+        "label": "Auto Open",
+        "default": false
+      }
+    ]
+  }
+-->
