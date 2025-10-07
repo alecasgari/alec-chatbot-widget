@@ -1,319 +1,385 @@
-# Alec ChatBot Widget - Deployment Guide
+# 🚀 Deployment Guide - WebSocket Server
 
-This guide will help you deploy the Alec ChatBot Widget to your VPS server.
+راهنمای کامل deployment سرور WebSocket به VPS
 
-## 📦 Build Files
+---
 
-After running `npm run build:widget`, you'll have:
+## 📋 دستورات سرور
 
+### مرحله 1: Pull کردن تغییرات از GitHub
+
+```bash
+cd ~/chatbot
+git pull origin main
 ```
-dist/
-├── widget.iife.js    # Main widget script (297KB)
-└── index.html        # Test page
+
+### مرحله 2: نصب Dependencies سرور
+
+```bash
+cd ~/chatbot/server
+npm install
 ```
 
-## 🚀 Deployment Options
+### مرحله 3: Build کردن Widget (اگر لازم است)
 
-### Option 1: Simple HTTP Server
+```bash
+cd ~/chatbot
+npm run build:widget
+```
 
-1. **Upload files to your server:**
+### مرحله 4: کپی کردن فایل‌های تست
+
+```bash
+cp test-widget.html dist/test-widget.html
+cp test-custom-theme.html dist/test-custom-theme.html
+```
+
+### مرحله 5: Stop کردن containerهای قدیمی
+
+```bash
+cd ~/chatbot
+docker-compose down
+```
+
+### مرحله 6: حذف تصاویر قدیمی (اختیاری)
+
+```bash
+docker rmi chatbot_chatbot chatbot_websocket-server 2>/dev/null || true
+```
+
+### مرحله 7: Build و Start کردن سرویس‌ها
+
+```bash
+docker-compose up -d --build
+```
+
+### مرحله 8: بررسی وضعیت
+
+```bash
+# بررسی containerها
+docker ps | grep chatbot
+
+# بررسی لاگ‌های WebSocket server
+docker logs -f alec-chatbot-websocket
+
+# بررسی لاگ‌های Widget server
+docker logs -f alec-chatbot-widget
+```
+
+---
+
+## 🔧 تنظیمات Nginx Proxy Manager
+
+### Proxy Host برای Widget (موجود)
+
+- **Domain Names:** `chat.alecasgari.com`
+- **Scheme:** `http`
+- **Forward Hostname / IP:** `alec-chatbot-widget`
+- **Forward Port:** `80`
+- **SSL:** Let's Encrypt
+- **Custom Nginx Config:**
+  ```nginx
+  # CORS headers
+  add_header 'Access-Control-Allow-Origin' '*' always;
+  add_header 'Access-Control-Allow-Methods' 'GET, POST, OPTIONS' always;
+  add_header 'Access-Control-Allow-Headers' 'Content-Type' always;
+  
+  # Cache control
+  add_header 'Cache-Control' 'no-cache, no-store, must-revalidate' always;
+  ```
+
+### Proxy Host جدید برای WebSocket Server
+
+#### HTTP API (Port 3001)
+
+- **Domain Names:** `chat.alecasgari.com`
+- **Scheme:** `http`
+- **Forward Hostname / IP:** `alec-chatbot-websocket`
+- **Forward Port:** `3001`
+- **SSL:** Let's Encrypt
+- **Custom Locations:**
+  
+  **Location 1: `/api/*`**
+  ```nginx
+  proxy_pass http://alec-chatbot-websocket:3001;
+  proxy_http_version 1.1;
+  proxy_set_header Host $host;
+  proxy_set_header X-Real-IP $remote_addr;
+  proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+  proxy_set_header X-Forwarded-Proto $scheme;
+  
+  # CORS
+  add_header 'Access-Control-Allow-Origin' '*' always;
+  add_header 'Access-Control-Allow-Methods' 'GET, POST, OPTIONS' always;
+  add_header 'Access-Control-Allow-Headers' 'Content-Type' always;
+  ```
+  
+  **Location 2: `/health`**
+  ```nginx
+  proxy_pass http://alec-chatbot-websocket:3001;
+  proxy_http_version 1.1;
+  ```
+
+#### WebSocket (Port 8080)
+
+**مهم:** WebSocket نیاز به یک subdomain جداگانه دارد یا باید از همان domain با path مشخص استفاده شود.
+
+**گزینه 1: Subdomain جداگانه (توصیه می‌شود)**
+
+- **Domain Names:** `ws.chat.alecasgari.com`
+- **Scheme:** `http`
+- **Forward Hostname / IP:** `alec-chatbot-websocket`
+- **Forward Port:** `8080`
+- **SSL:** Let's Encrypt
+- **Websockets Support:** ✅ (فعال کنید)
+- **Custom Nginx Config:**
+  ```nginx
+  proxy_http_version 1.1;
+  proxy_set_header Upgrade $http_upgrade;
+  proxy_set_header Connection "upgrade";
+  proxy_set_header Host $host;
+  proxy_set_header X-Real-IP $remote_addr;
+  proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+  proxy_set_header X-Forwarded-Proto $scheme;
+  
+  proxy_read_timeout 86400;
+  proxy_send_timeout 86400;
+  ```
+
+**گزینه 2: استفاده از همان domain با port مشخص**
+
+اگر می‌خواهید از `chat.alecasgari.com:8080` استفاده کنید:
+
+1. در Cloudflare، یک A Record برای `chat.alecasgari.com` ایجاد کنید
+2. در firewall سرور، port 8080 را باز کنید:
    ```bash
-   scp -r dist/* user@your-server:/var/www/chatbot/
+   sudo ufw allow 8080/tcp
    ```
+3. در NPM نیازی به proxy host جداگانه ندارید
 
-2. **Configure Nginx:**
-   ```nginx
-   server {
-       listen 80;
-       server_name your-domain.com;
-       
-       location /chatbot/ {
-           alias /var/www/chatbot/;
-           add_header Access-Control-Allow-Origin *;
-           add_header Access-Control-Allow-Methods "GET, POST, OPTIONS";
-           add_header Access-Control-Allow-Headers "Content-Type";
-           
-           # Enable gzip compression
-           gzip on;
-           gzip_types text/javascript application/javascript;
-       }
-   }
-   ```
+---
 
-3. **Test the widget:**
-   ```
-   https://your-domain.com/chatbot/index.html
-   ```
+## 🔥 تنظیمات Firewall
 
-### Option 2: CDN Integration
+```bash
+# اگر از UFW استفاده می‌کنید
+sudo ufw allow 3001/tcp
+sudo ufw allow 8080/tcp
+sudo ufw reload
 
-1. **Upload to CDN:**
-   - Upload `widget.iife.js` to your CDN
-   - Example: `https://cdn.your-domain.com/widget.js`
-
-2. **Use in websites:**
-   ```html
-   <script src="https://cdn.your-domain.com/widget.js"></script>
-   <script>
-     const chatbot = new AlecChatBot({
-       webhookUrl: 'https://n8n.alecasgari.com/webhook/2531f7c2-f516-435e-9f56-9ed98b3d673a',
-       theme: { primaryColor: '#059669' }
-     });
-     chatbot.init();
-   </script>
-   ```
-
-## 🔧 Server Configuration
-
-### Nginx Configuration
-
-```nginx
-# /etc/nginx/sites-available/chatbot
-server {
-    listen 80;
-    server_name chatbot.your-domain.com;
-    root /var/www/chatbot;
-    index index.html;
-
-    # Enable gzip compression
-    gzip on;
-    gzip_vary on;
-    gzip_min_length 1024;
-    gzip_types
-        text/plain
-        text/css
-        text/xml
-        text/javascript
-        application/javascript
-        application/xml+rss
-        application/json;
-
-    # CORS headers for widget
-    location / {
-        add_header Access-Control-Allow-Origin *;
-        add_header Access-Control-Allow-Methods "GET, POST, OPTIONS";
-        add_header Access-Control-Allow-Headers "Content-Type";
-        
-        # Cache static assets
-        location ~* \.(js|css|png|jpg|jpeg|gif|ico|svg)$ {
-            expires 1y;
-            add_header Cache-Control "public, immutable";
-        }
-    }
-
-    # Security headers
-    add_header X-Frame-Options "SAMEORIGIN" always;
-    add_header X-XSS-Protection "1; mode=block" always;
-    add_header X-Content-Type-Options "nosniff" always;
-}
+# اگر از iptables استفاده می‌کنید
+sudo iptables -A INPUT -p tcp --dport 3001 -j ACCEPT
+sudo iptables -A INPUT -p tcp --dport 8080 -j ACCEPT
+sudo iptables-save
 ```
 
-### Apache Configuration
+---
 
-```apache
-# /etc/apache2/sites-available/chatbot.conf
-<VirtualHost *:80>
-    ServerName chatbot.your-domain.com
-    DocumentRoot /var/www/chatbot
+## ☁️ تنظیمات Cloudflare
 
-    # Enable compression
-    LoadModule deflate_module modules/mod_deflate.so
-    <Location />
-        SetOutputFilter DEFLATE
-        SetEnvIfNoCase Request_URI \
-            \.(?:gif|jpe?g|png)$ no-gzip dont-vary
-        SetEnvIfNoCase Request_URI \
-            \.(?:exe|t?gz|zip|bz2|sit|rar)$ no-gzip dont-vary
-    </Location>
+### DNS Records
 
-    # CORS headers
-    Header always set Access-Control-Allow-Origin "*"
-    Header always set Access-Control-Allow-Methods "GET, POST, OPTIONS"
-    Header always set Access-Control-Allow-Headers "Content-Type"
+اضافه کردن یا به‌روزرسانی:
 
-    # Cache static assets
-    <LocationMatch "\.(js|css|png|jpg|jpeg|gif|ico|svg)$">
-        ExpiresActive On
-        ExpiresDefault "access plus 1 year"
-        Header set Cache-Control "public, immutable"
-    </LocationMatch>
-</VirtualHost>
+1. **A Record برای WebSocket (اگر از subdomain استفاده می‌کنید):**
+   - Type: `A`
+   - Name: `ws.chat` یا `ws`
+   - Content: `[IP سرور شما]`
+   - Proxy status: `DNS only` (غیرفعال - خاکستری)
+   - TTL: `Auto`
+
+2. **A Record اصلی:**
+   - Type: `A`
+   - Name: `chat`
+   - Content: `[IP سرور شما]`
+   - Proxy status: `Proxied` (فعال - نارنجی)
+   - TTL: `Auto`
+
+**توجه:** برای WebSocket، Cloudflare Proxy را **غیرفعال** کنید (DNS only) تا مشکلی پیش نیاید.
+
+---
+
+## 🧪 تست کردن
+
+### 1. تست Widget
+
+```bash
+# از مرورگر
+https://chat.alecasgari.com/test-widget.html
 ```
 
-## 📋 Usage Examples
+### 2. تست WebSocket Connection
 
-### Basic Integration
-
-```html
-<!DOCTYPE html>
-<html>
-<head>
-    <title>My Website</title>
-</head>
-<body>
-    <!-- Your website content -->
-    
-    <!-- ChatBot Widget -->
-    <script src="https://chatbot.your-domain.com/widget.iife.js"></script>
-    <script>
-        const chatbot = new AlecChatBot({
-            webhookUrl: 'https://n8n.alecasgari.com/webhook/2531f7c2-f516-435e-9f56-9ed98b3d673a'
-        });
-        chatbot.init();
-    </script>
-</body>
-</html>
+باز کردن Console مرورگر (F12) و بررسی لاگ‌ها:
+```
+🔌 Connecting to WebSocket: wss://chat.alecasgari.com:8080
+✅ WebSocket connected
+✅ Session registered: cw-1234567890-abc123
 ```
 
-### Advanced Integration
+### 3. تست HTTP API
 
-```html
-<script src="https://chatbot.your-domain.com/widget.iife.js"></script>
-<script>
-    const chatbot = new AlecChatBot({
-        webhookUrl: 'https://n8n.alecasgari.com/webhook/2531f7c2-f516-435e-9f56-9ed98b3d673a',
-        theme: {
-            primaryColor: '#3b82f6',
-            position: 'bottom-left',
-            title: 'Support Chat',
-            placeholder: 'How can we help you?'
-        },
-        features: {
-            resizable: false,
-            typingAnimation: true,
-            connectionStatus: true,
-            autoOpen: false
-        },
-        callbacks: {
-            onMessage: (message) => {
-                // Track analytics
-                gtag('event', 'chat_message', {
-                    'event_category': 'engagement',
-                    'event_label': 'chatbot'
-                });
-            },
-            onOpen: () => {
-                console.log('Chat opened');
-                // Track chat open
-            },
-            onClose: () => {
-                console.log('Chat closed');
-                // Track chat close
-            },
-            onError: (error) => {
-                console.error('Chat error:', error);
-                // Handle errors
-            }
-        }
-    });
+```bash
+# Health check
+curl https://chat.alecasgari.com/health
 
-    // Initialize widget
-    const instance = chatbot.init();
+# Get active sessions
+curl https://chat.alecasgari.com/api/sessions
 
-    // Optional: Programmatic control
-    document.getElementById('open-chat').addEventListener('click', () => {
-        instance.open();
-    });
-</script>
+# Send test message (نیاز به sessionId فعال)
+curl -X POST https://chat.alecasgari.com/api/send-message \
+  -H "Content-Type: application/json" \
+  -d '{
+    "sessionId": "cw-1234567890-abc123",
+    "text": "Test message from operator"
+  }'
 ```
 
-## 🔒 Security Considerations
+### 4. تست از n8n
 
-1. **HTTPS Only:** Always serve the widget over HTTPS
-2. **CORS Configuration:** Properly configure CORS headers
-3. **Content Security Policy:** Add CSP headers if needed
-4. **Rate Limiting:** Implement rate limiting for webhook endpoints
+1. به n8n بروید
+2. یک HTTP Request node اضافه کنید
+3. تنظیمات:
+   - Method: `POST`
+   - URL: `https://chat.alecasgari.com/api/send-message`
+   - Body:
+     ```json
+     {
+       "sessionId": "{{$json.sessionId}}",
+       "text": "Hello from n8n!"
+     }
+     ```
+4. Execute کنید
 
-## 📊 Monitoring
+---
 
-### Analytics Integration
+## 📊 Monitoring و Debugging
 
-```javascript
-// Google Analytics integration
-const chatbot = new AlecChatBot({
-    // ... config
-    callbacks: {
-        onMessage: (message) => {
-            gtag('event', 'chat_message', {
-                'event_category': 'engagement',
-                'event_label': 'chatbot'
-            });
-        },
-        onOpen: () => {
-            gtag('event', 'chat_open', {
-                'event_category': 'engagement',
-                'event_label': 'chatbot'
-            });
-        }
-    }
-});
+### بررسی لاگ‌ها
+
+```bash
+# WebSocket server logs
+docker logs -f alec-chatbot-websocket
+
+# Widget server logs  
+docker logs -f alec-chatbot-widget
+
+# همه لاگ‌ها
+docker-compose logs -f
 ```
 
-### Error Monitoring
+### بررسی وضعیت سرویس‌ها
 
-```javascript
-const chatbot = new AlecChatBot({
-    // ... config
-    callbacks: {
-        onError: (error) => {
-            // Send to error tracking service
-            Sentry.captureException(new Error('ChatBot Error: ' + error));
-        }
-    }
-});
+```bash
+# List running containers
+docker ps
+
+# Check health
+docker inspect --format='{{.State.Health.Status}}' alec-chatbot-websocket
+
+# Network info
+docker network inspect web-network
 ```
 
-## 🚀 Performance Optimization
+### بررسی active sessions
 
-1. **CDN:** Use a CDN for faster global delivery
-2. **Compression:** Enable gzip/brotli compression
-3. **Caching:** Set appropriate cache headers
-4. **Minification:** The widget is already minified
-
-## 📝 Testing Checklist
-
-- [ ] Widget loads on HTTPS
-- [ ] CORS headers are set correctly
-- [ ] Widget communicates with n8n webhook
-- [ ] Responsive design works on mobile
-- [ ] Theme customization works
-- [ ] Callback functions are triggered
-- [ ] Error handling works properly
-- [ ] Performance is acceptable (< 3s load time)
-
-## 🆘 Troubleshooting
-
-### Common Issues
-
-1. **Widget not loading:**
-   - Check CORS headers
-   - Verify HTTPS
-   - Check browser console for errors
-
-2. **Webhook not responding:**
-   - Verify webhook URL
-   - Check n8n workflow is active
-   - Test webhook directly
-
-3. **Styling issues:**
-   - Check CSS conflicts
-   - Verify Tailwind CSS is loaded
-   - Check z-index conflicts
-
-### Debug Mode
-
-```javascript
-const chatbot = new AlecChatBot({
-    // ... config
-    callbacks: {
-        onError: (error) => {
-            console.error('ChatBot Debug:', error);
-            // Add your debugging logic here
-        }
-    }
-});
+```bash
+curl https://chat.alecasgari.com/api/sessions
 ```
 
-## 📞 Support
+---
 
-For deployment issues or questions, contact Alec Asgari.
+## 🐛 Troubleshooting
+
+### مشکل: WebSocket اتصال برقرار نمی‌کند
+
+**راه‌حل:**
+1. بررسی firewall: `sudo ufw status`
+2. بررسی port: `netstat -tlnp | grep 8080`
+3. بررسی لاگ: `docker logs alec-chatbot-websocket`
+4. بررسی Cloudflare: proxy را غیرفعال کنید
+5. تست local: `wscat -c ws://localhost:8080`
+
+### مشکل: CORS errors
+
+**راه‌حل:**
+1. بررسی Nginx config
+2. اضافه کردن CORS headers در NPM
+3. Restart کردن proxy: در NPM، proxy host را disable و enable کنید
+
+### مشکل: Container بالا نمی‌آید
+
+**راه‌حل:**
+```bash
+# Remove old containers
+docker-compose down -v
+
+# Rebuild completely
+docker-compose up -d --build --force-recreate
+
+# Check logs
+docker-compose logs
+```
+
+### مشکل: Port already in use
+
+**راه‌حل:**
+```bash
+# پیدا کردن process
+sudo lsof -i :8080
+sudo lsof -i :3001
+
+# Kill کردن process
+sudo kill -9 [PID]
+
+# یا تغییر port در docker-compose.yml
+```
+
+---
+
+## 🔄 به‌روزرسانی
+
+برای به‌روزرسانی در آینده:
+
+```bash
+cd ~/chatbot
+git pull origin main
+cd server && npm install && cd ..
+npm run build:widget
+cp test-widget.html dist/
+docker-compose down
+docker-compose up -d --build
+```
+
+---
+
+## 📞 پشتیبانی
+
+اگر مشکلی پیش آمد:
+
+1. لاگ‌ها را بررسی کنید
+2. مستندات را مطالعه کنید: `OPERATOR-MESSAGING-GUIDE.md`
+3. تماس با پشتیبانی: support@alecasgari.com
+
+---
+
+## ✅ Checklist نهایی
+
+قبل از تست production:
+
+- [ ] git pull انجام شد
+- [ ] Dependencies نصب شد
+- [ ] Widget build شد
+- [ ] docker-compose up موفق بود
+- [ ] Containers running هستند
+- [ ] Nginx proxy hosts تنظیم شدند
+- [ ] Cloudflare DNS تنظیم شد
+- [ ] Firewall ports باز هستند
+- [ ] test-widget.html کار می‌کند
+- [ ] WebSocket اتصال برقرار می‌شود
+- [ ] API endpoints پاسخ می‌دهند
+- [ ] n8n می‌تواند پیام بفرستد
+
+---
+
+© 2025 Alec Asgari. All rights reserved.
