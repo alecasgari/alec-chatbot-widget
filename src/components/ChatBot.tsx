@@ -116,7 +116,7 @@ export function ChatBot({ config }: ChatBotProps) {
   useEffect(() => {
     // Determine WebSocket URL based on environment
     const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
-    const wsUrl = `${protocol}//chat.alecasgari.com:8080`;
+    const wsUrl = `${protocol}//chat.alecasgari.com/ws/`;
     
     console.log(`🔌 Connecting to WebSocket: ${wsUrl}`);
     
