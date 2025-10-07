@@ -31,6 +31,8 @@ export function ChatBot({ config }: ChatBotProps) {
   const [chatSize, setChatSize] = useState({ width: 384, height: 500 });
   const [connectionStatus, setConnectionStatus] = useState<'connected' | 'disconnected' | 'checking'>('checking');
   const [sessionId] = useState(() => `cw-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`);
+  const [ws, setWs] = useState<WebSocket | null>(null);
+  const [wsConnected, setWsConnected] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const scrollAreaRef = useRef<HTMLDivElement>(null);
 
@@ -109,6 +111,126 @@ export function ChatBot({ config }: ChatBotProps) {
 
     checkConnection();
   }, [sessionId]);
+
+  // WebSocket connection for receiving operator messages
+  useEffect(() => {
+    // Determine WebSocket URL based on environment
+    const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+    const wsUrl = `${protocol}//chat.alecasgari.com:8080`;
+    
+    console.log(`🔌 Connecting to WebSocket: ${wsUrl}`);
+    
+    let websocket: WebSocket;
+    let reconnectTimeout: NodeJS.Timeout;
+    let pingInterval: NodeJS.Timeout;
+    
+    const connect = () => {
+      try {
+        websocket = new WebSocket(wsUrl);
+        
+        websocket.onopen = () => {
+          console.log('✅ WebSocket connected');
+          setWsConnected(true);
+          
+          // Register session with server
+          websocket.send(JSON.stringify({
+            type: 'register',
+            sessionId: sessionId
+          }));
+          
+          // Start ping interval to keep connection alive
+          pingInterval = setInterval(() => {
+            if (websocket.readyState === WebSocket.OPEN) {
+              websocket.send(JSON.stringify({ type: 'ping' }));
+            }
+          }, 30000); // Ping every 30 seconds
+        };
+        
+        websocket.onmessage = (event) => {
+          try {
+            const data = JSON.parse(event.data);
+            console.log('📨 WebSocket message received:', data);
+            
+            if (data.type === 'operator_message') {
+              // Add operator message to chat
+              const operatorMessage: Message = {
+                id: data.messageId || Date.now().toString(),
+                text: data.text,
+                sender: 'bot',
+                timestamp: new Date(data.timestamp)
+              };
+              
+              setMessages(prev => [...prev, operatorMessage]);
+              console.log('✅ Operator message added to chat');
+              
+              // Call callback if provided
+              if (config.callbacks?.onMessage) {
+                config.callbacks.onMessage(data.text);
+              }
+            } else if (data.type === 'registered') {
+              console.log(`✅ Session registered: ${data.sessionId}`);
+            } else if (data.type === 'pong') {
+              // Keep-alive response
+              console.log('🏓 Pong received');
+            }
+          } catch (error) {
+            console.error('❌ Error processing WebSocket message:', error);
+          }
+        };
+        
+        websocket.onerror = (error) => {
+          console.error('❌ WebSocket error:', error);
+          setWsConnected(false);
+        };
+        
+        websocket.onclose = (event) => {
+          console.log(`🔌 WebSocket disconnected (Code: ${event.code})`);
+          setWsConnected(false);
+          
+          // Clear ping interval
+          if (pingInterval) {
+            clearInterval(pingInterval);
+          }
+          
+          // Attempt to reconnect after 5 seconds
+          console.log('🔄 Will attempt to reconnect in 5 seconds...');
+          reconnectTimeout = setTimeout(() => {
+            console.log('🔄 Attempting to reconnect...');
+            connect();
+          }, 5000);
+        };
+        
+        setWs(websocket);
+        
+      } catch (error) {
+        console.error('❌ Error creating WebSocket connection:', error);
+        setWsConnected(false);
+        
+        // Retry connection after 5 seconds
+        reconnectTimeout = setTimeout(connect, 5000);
+      }
+    };
+    
+    // Initial connection
+    connect();
+    
+    // Cleanup on unmount
+    return () => {
+      console.log('🧹 Cleaning up WebSocket connection');
+      
+      if (reconnectTimeout) {
+        clearTimeout(reconnectTimeout);
+      }
+      
+      if (pingInterval) {
+        clearInterval(pingInterval);
+      }
+      
+      if (websocket && websocket.readyState === WebSocket.OPEN) {
+        websocket.close();
+      }
+    };
+  }, [sessionId, config.callbacks]);
 
   const handleSendMessage = async () => {
     if (!inputText.trim()) return;
