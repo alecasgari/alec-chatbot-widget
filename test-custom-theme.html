@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Custom Theme - Alec ChatBot</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 40px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+        h1 {
+            color: #333;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .test-info {
+            background: #e7f3ff;
+            border: 2px solid #3b82f6;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+        }
+        .test-info h2 {
+            color: #3b82f6;
+            margin-top: 0;
+        }
+        .code-block {
+            background: #2d3748;
+            color: #e2e8f0;
+            padding: 20px;
+            border-radius: 10px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9rem;
+            overflow-x: auto;
+            margin: 20px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🧪 Test Custom Theme Integration</h1>
+        
+        <div class="test-info">
+            <h2>✅ This page tests the Custom Theme method</h2>
+            <p>If you can see the chatbot widget in the bottom-left corner with a custom color and title, the integration is working correctly!</p>
+        </div>
+        
+        <h2>📋 Code used on this page:</h2>
+        <div class="code-block">
+&lt;!-- Alec ChatBot Widget - Custom Theme --&gt;
+&lt;link rel="stylesheet" href="https://chat.alecasgari.com/widget.css"&gt;
+&lt;script src="https://chat.alecasgari.com/widget.iife.js"&gt;&lt;/script&gt;
+&lt;script&gt;
+  document.addEventListener('DOMContentLoaded', function() {
+    new (window.AlecChatBot.default || window.AlecChatBot)({
+      webhookUrl: 'https://n8n.alecasgari.com/webhook/2531f7c2-f516-435e-9f56-9ed98b3d673a',
+      theme: {
+        primaryColor: '#8bc70a',
+        position: 'bottom-left',
+        title: 'Alec\'s Assistant [Rabi]',
+        placeholder: 'Ask me anything...'
+      }
+    }).init();
+  });
+&lt;/script&gt;
+        </div>
+        
+        <h2>🎯 Expected Result:</h2>
+        <ul>
+            <li>✅ Chatbot widget appears in bottom-left corner</li>
+            <li>✅ Widget has green color (#8bc70a)</li>
+            <li>✅ Title shows "Alec's Assistant [Rabi]"</li>
+            <li>✅ Placeholder text shows "Ask me anything..."</li>
+            <li>✅ Widget is clickable and functional</li>
+        </ul>
+        
+        <h2>🔧 If it's not working:</h2>
+        <ol>
+            <li>Check browser console (F12) for errors</li>
+            <li>Make sure you have internet connection</li>
+            <li>Verify the webhook URL is correct</li>
+            <li>Try refreshing the page</li>
+        </ol>
+    </div>
+
+    <!-- Alec ChatBot Widget - Custom Theme -->
+    <link rel="stylesheet" href="https://chat.alecasgari.com/widget.css">
+    <script src="https://chat.alecasgari.com/widget.iife.js"></script>
+    <script>
+      document.addEventListener('DOMContentLoaded', function() {
+        new (window.AlecChatBot.default || window.AlecChatBot)({
+          webhookUrl: 'https://n8n.alecasgari.com/webhook/2531f7c2-f516-435e-9f56-9ed98b3d673a',
+          theme: {
+            primaryColor: '#8bc70a',
+            position: 'bottom-left',
+            title: 'Alec\'s Assistant [Rabi]',
+            placeholder: 'Ask me anything...'
+          }
+        }).init();
+      });
+    </script>
+</body>
+</html>
