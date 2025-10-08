@@ -3,991 +3,202 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Alec ChatBot Widget - Complete Integration Guide</title>
+    <title>Alec ChatBot Widget - Test Page</title>
     <link rel="stylesheet" href="https://chat.alecasgari.com/widget.css">
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
+        body { 
+            font-family: Arial, sans-serif; 
+            margin: 20px; 
+            background: #f5f5f5;
         }
-        
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
-            padding: 40px 20px;
-        }
-        
-        .container {
-            max-width: 1400px;
-            margin: 0 auto;
+        .container { 
+            max-width: 800px; 
+            margin: 0 auto; 
             background: white;
-            border-radius: 20px;
-            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
-            overflow: hidden;
-        }
-        
-        .header {
-            background: linear-gradient(135deg, #059669 0%, #047857 100%);
-            color: white;
-            padding: 40px;
-            text-align: center;
-        }
-        
-        .header h1 {
-            font-size: 2.5rem;
-            margin-bottom: 10px;
-        }
-        
-        .header p {
-            font-size: 1.2rem;
-            opacity: 0.9;
-        }
-        
-        .content {
-            padding: 40px;
-        }
-        
-        .intro-section {
-            background: #e7f3ff;
-            border: 2px solid #3b82f6;
-            padding: 30px;
-            border-radius: 15px;
-            margin-bottom: 40px;
-        }
-        
-        .intro-section h2 {
-            color: #3b82f6;
-            margin-bottom: 15px;
-        }
-        
-        .intro-section p {
-            color: #333;
-            line-height: 1.6;
-            margin-bottom: 10px;
-        }
-        
-        .methods-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(600px, 1fr));
-            gap: 30px;
-            margin-bottom: 40px;
-        }
-        
-        .method-card {
-            background: #f8f9fa;
-            border-radius: 15px;
-            overflow: hidden;
-            border: 2px solid #e0e0e0;
-            transition: all 0.3s ease;
-        }
-        
-        .method-card:hover {
-            border-color: #059669;
-            box-shadow: 0 5px 20px rgba(5, 150, 105, 0.2);
-        }
-        
-        .method-header {
-            background: linear-gradient(135deg, #059669 0%, #047857 100%);
-            color: white;
             padding: 20px;
-        }
-        
-        .method-number {
-            display: inline-block;
-            background: rgba(255,255,255,0.2);
-            padding: 5px 15px;
-            border-radius: 20px;
-            font-size: 0.9rem;
-            margin-bottom: 10px;
-        }
-        
-        .method-title {
-            font-size: 1.5rem;
-            font-weight: bold;
-            margin-bottom: 10px;
-        }
-        
-        .method-description {
-            opacity: 0.9;
-            font-size: 1rem;
-        }
-        
-        .method-body {
-            padding: 25px;
-        }
-        
-        .instruction-section {
-            background: #fff9e6;
-            border-left: 4px solid #fbbf24;
-            padding: 15px;
-            margin-bottom: 20px;
-            border-radius: 5px;
-        }
-        
-        .instruction-section h4 {
-            color: #92400e;
-            margin-bottom: 10px;
-            font-size: 1.1rem;
-        }
-        
-        .instruction-section ol {
-            margin-left: 20px;
-            color: #78350f;
-        }
-        
-        .instruction-section li {
-            margin: 8px 0;
-            line-height: 1.6;
-        }
-        
-        .config-editor {
-            background: #2d3748;
-            border-radius: 10px;
-            padding: 20px;
-            margin-bottom: 15px;
-        }
-        
-        .config-label {
-            color: #e2e8f0;
-            font-size: 0.9rem;
-            margin-bottom: 8px;
-            display: block;
-        }
-        
-        .config-input,
-        .config-select,
-        .config-textarea {
-            width: 100%;
-            padding: 10px;
-            border: 2px solid #4a5568;
-            border-radius: 5px;
-            background: #1a202c;
-            color: #e2e8f0;
-            font-family: 'Courier New', monospace;
-            font-size: 0.9rem;
-            margin-bottom: 15px;
-        }
-        
-        .config-textarea {
-            min-height: 120px;
-            resize: vertical;
-        }
-        
-        .config-checkbox {
-            margin-right: 8px;
-        }
-        
-        .code-output {
-            background: #2d3748;
-            color: #e2e8f0;
-            padding: 20px;
-            border-radius: 10px;
-            font-family: 'Courier New', monospace;
-            font-size: 0.85rem;
-            overflow-x: auto;
-            white-space: pre-wrap;
-            word-wrap: break-word;
-            margin-bottom: 15px;
-            position: relative;
-        }
-        
-        .code-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 10px;
-        }
-        
-        .code-title {
-            color: #a0aec0;
-            font-size: 0.9rem;
-            font-weight: bold;
-        }
-        
-        .button-group {
-            display: flex;
-            gap: 10px;
-            flex-wrap: wrap;
-        }
-        
-        .btn {
-            padding: 12px 24px;
-            border: none;
             border-radius: 8px;
-            cursor: pointer;
-            font-size: 1rem;
-            font-weight: 600;
-            transition: all 0.3s ease;
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
         }
-        
-        .btn-primary {
-            background: #059669;
-            color: white;
+        .test-section { 
+            margin: 20px 0; 
+            padding: 20px; 
+            border: 1px solid #ddd; 
+            border-radius: 8px; 
+            background: #f9f9f9;
         }
-        
-        .btn-primary:hover {
-            background: #047857;
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(5, 150, 105, 0.3);
+        button { 
+            background: #007bff; 
+            color: white; 
+            padding: 10px 20px; 
+            border: none; 
+            border-radius: 4px; 
+            cursor: pointer; 
+            margin: 5px;
         }
-        
-        .btn-secondary {
-            background: #3b82f6;
-            color: white;
+        button:hover { 
+            background: #0056b3; 
         }
-        
-        .btn-secondary:hover {
-            background: #2563eb;
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(59, 130, 246, 0.3);
+        .status { 
+            margin: 10px 0; 
+            padding: 10px; 
+            border-radius: 4px; 
         }
-        
-        .btn-copy {
-            background: #6366f1;
-            color: white;
+        .success { 
+            background: #d4edda; 
+            color: #155724; 
+            border: 1px solid #c3e6cb; 
         }
-        
-        .btn-copy:hover {
-            background: #4f46e5;
+        .error { 
+            background: #f8d7da; 
+            color: #721c24; 
+            border: 1px solid #f5c6cb; 
         }
-        
-        .btn-copied {
-            background: #10b981 !important;
+        .info { 
+            background: #d1ecf1; 
+            color: #0c5460; 
+            border: 1px solid #bee5eb; 
         }
-        
-        .status-message {
-            padding: 12px;
-            border-radius: 8px;
-            margin-top: 15px;
-            display: none;
-        }
-        
-        .status-success {
-            background: #d4edda;
-            color: #155724;
-            border: 1px solid #c3e6cb;
-        }
-        
-        .status-info {
-            background: #d1ecf1;
-            color: #0c5460;
-            border: 1px solid #bee5eb;
-        }
-        
-        .debug-panel {
-            background: #1a202c;
-            border-radius: 15px;
-            padding: 25px;
-            margin-top: 40px;
-        }
-        
-        .debug-panel h3 {
-            color: #e2e8f0;
-            margin-bottom: 15px;
-        }
-        
-        .debug-log {
-            background: #2d3748;
-            border-radius: 8px;
-            padding: 15px;
+        #debug-console {
             max-height: 300px;
             overflow-y: auto;
+            border: 1px solid #ddd;
+            padding: 10px;
+            background: #f8f9fa;
+            border-radius: 4px;
         }
-        
-        .debug-message {
-            padding: 8px;
+        .console-entry {
             margin: 5px 0;
-            border-radius: 5px;
-            font-family: 'Courier New', monospace;
-            font-size: 0.85rem;
-        }
-        
-        .debug-message.success {
-            background: rgba(16, 185, 129, 0.2);
-            color: #10b981;
-        }
-        
-        .debug-message.error {
-            background: rgba(239, 68, 68, 0.2);
-            color: #ef4444;
-        }
-        
-        .debug-message.info {
-            background: rgba(59, 130, 246, 0.2);
-            color: #3b82f6;
-        }
-        
-        .icon {
-            width: 16px;
-            height: 16px;
-            display: inline-block;
-        }
-        
-        @media (max-width: 768px) {
-            .methods-grid {
-                grid-template-columns: 1fr;
-            }
-            
-            .header h1 {
-                font-size: 1.8rem;
-            }
-            
-            .content {
-                padding: 20px;
-            }
+            padding: 5px;
+            border-radius: 3px;
+            font-family: monospace;
+            font-size: 12px;
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <div class="header">
-            <h1>🚀 Alec ChatBot Widget</h1>
-            <p>Complete Integration Guide & Live Testing</p>
+        <h1>🚀 Alec ChatBot Widget - Test Page</h1>
+        
+        <div class="test-section">
+            <h2>WebSocket Connection Test</h2>
+            <p>This page tests the WebSocket connection with the updated URL.</p>
+            
+            <button onclick="testWidget()">Initialize Widget</button>
+            <button onclick="testWebSocket()">Check WebSocket Status</button>
+            <button onclick="clearConsole()">Clear Console</button>
+            
+            <div id="status"></div>
         </div>
         
-        <div class="content">
-            <div class="intro-section">
-                <h2>👋 Welcome to the Integration Guide</h2>
-                <p>This page provides 6 different methods to integrate the Alec ChatBot widget into your website. Each method is fully customizable and comes with complete instructions.</p>
-                <p><strong>How to use:</strong> Select a method below, customize the settings if needed, copy the generated code, and paste it into your HTML page. That's it!</p>
-                <p><strong>Test it live:</strong> Click the "Test This Method" button to see how the widget will look with your customizations before copying the code.</p>
-            </div>
-            
-            <div class="methods-grid">
-                <!-- Method 1: Simple Integration -->
-                <div class="method-card">
-                    <div class="method-header">
-                        <div class="method-number">METHOD 1</div>
-                        <div class="method-title">Simple Integration</div>
-                        <div class="method-description">The easiest way to add the chatbot - minimal configuration required</div>
-                    </div>
-                    <div class="method-body">
-                        <div class="instruction-section">
-                            <h4>📋 How to Use:</h4>
-                            <ol>
-                                <li>Copy the generated code below</li>
-                                <li>Paste it at the end of your HTML page, just before the closing <code>&lt;/body&gt;</code> tag</li>
-                                <li>Save and reload your page - the chatbot will appear in the bottom-right corner</li>
-                            </ol>
-                        </div>
-                        
-                        <div class="code-output" id="code-method1">
-                            <div class="code-header">
-                                <span class="code-title">📄 Copy this code:</span>
-                                <button class="btn btn-copy" onclick="copyCode('method1')">
-                                    <span id="copy-text-method1">📋 Copy Code</span>
-                                </button>
-                            </div>
-                            <div id="code-content-method1"></div>
-                        </div>
-                        
-                        <div class="button-group">
-                            <button class="btn btn-primary" onclick="testMethod1()">
-                                ✨ Test This Method
-                            </button>
-                        </div>
-                        
-                        <div class="status-message status-success" id="status-method1"></div>
-                    </div>
-                </div>
-
-                <!-- Method 2: One-liner Integration -->
-                <div class="method-card">
-                    <div class="method-header">
-                        <div class="method-number">METHOD 2</div>
-                        <div class="method-title">One-liner Integration</div>
-                        <div class="method-description">Ultra-simple - everything in one line of code</div>
-                    </div>
-                    <div class="method-body">
-                        <div class="instruction-section">
-                            <h4>📋 How to Use:</h4>
-                            <ol>
-                                <li>Copy the generated code below</li>
-                                <li>Paste it anywhere in your HTML page (preferably at the end, before <code>&lt;/body&gt;</code>)</li>
-                                <li>That's it! The chatbot loads and initializes automatically</li>
-                            </ol>
-                        </div>
-                        
-                        <div class="code-output" id="code-method2">
-                            <div class="code-header">
-                                <span class="code-title">📄 Copy this code:</span>
-                                <button class="btn btn-copy" onclick="copyCode('method2')">
-                                    <span id="copy-text-method2">📋 Copy Code</span>
-                                </button>
-                            </div>
-                            <div id="code-content-method2"></div>
-                        </div>
-                        
-                        <div class="button-group">
-                            <button class="btn btn-primary" onclick="testMethod2()">
-                                ✨ Test This Method
-                            </button>
-                        </div>
-                        
-                        <div class="status-message status-success" id="status-method2"></div>
-                    </div>
-                </div>
-
-                <!-- Method 3: Advanced Integration -->
-                <div class="method-card">
-                    <div class="method-header">
-                        <div class="method-number">METHOD 3</div>
-                        <div class="method-title">Advanced Integration</div>
-                        <div class="method-description">Full control with callbacks, analytics, and event tracking</div>
-                    </div>
-                    <div class="method-body">
-                        <div class="instruction-section">
-                            <h4>📋 How to Use:</h4>
-                            <ol>
-                                <li>Customize the settings below to match your needs</li>
-                                <li>Copy the generated code</li>
-                                <li>Paste it at the end of your HTML page, before <code>&lt;/body&gt;</code></li>
-                                <li>The callbacks will fire when users interact with the chatbot</li>
-                            </ol>
-                        </div>
-                        
-                        <div class="config-editor">
-                            <label class="config-label">Primary Color:</label>
-                            <input type="color" class="config-input" id="color-method3" value="#3b82f6" onchange="updateMethod3()">
-                            
-                            <label class="config-label">Chat Title:</label>
-                            <input type="text" class="config-input" id="title-method3" value="Support Assistant" onchange="updateMethod3()">
-                            
-                            <label class="config-label">Placeholder Text:</label>
-                            <input type="text" class="config-input" id="placeholder-method3" value="How can I help you?" onchange="updateMethod3()">
-                            
-                            <label class="config-label">Position:</label>
-                            <select class="config-select" id="position-method3" onchange="updateMethod3()">
-                                <option value="bottom-right">Bottom Right</option>
-                                <option value="bottom-left">Bottom Left</option>
-                                <option value="top-right">Top Right</option>
-                                <option value="top-left">Top Left</option>
-                            </select>
-                        </div>
-                        
-                        <div class="code-output" id="code-method3">
-                            <div class="code-header">
-                                <span class="code-title">📄 Copy this code:</span>
-                                <button class="btn btn-copy" onclick="copyCode('method3')">
-                                    <span id="copy-text-method3">📋 Copy Code</span>
-                                </button>
-                            </div>
-                            <div id="code-content-method3"></div>
-                        </div>
-                        
-                        <div class="button-group">
-                            <button class="btn btn-primary" onclick="testMethod3()">
-                                ✨ Test This Method
-                            </button>
-                        </div>
-                        
-                        <div class="status-message status-success" id="status-method3"></div>
-                    </div>
-                </div>
-
-                <!-- Method 4: Custom Theme -->
-                <div class="method-card">
-                    <div class="method-header">
-                        <div class="method-number">METHOD 4</div>
-                        <div class="method-title">Custom Theme</div>
-                        <div class="method-description">Customize colors and position to match your brand</div>
-                    </div>
-                    <div class="method-body">
-                        <div class="instruction-section">
-                            <h4>📋 How to Use:</h4>
-                            <ol>
-                                <li>Use the controls below to customize the appearance</li>
-                                <li>Test it live to see how it looks</li>
-                                <li>Copy the generated code when you're happy with the design</li>
-                                <li>Paste it before <code>&lt;/body&gt;</code> in your HTML</li>
-                            </ol>
-                        </div>
-                        
-                        <div class="config-editor">
-                            <label class="config-label">Primary Color:</label>
-                            <input type="color" class="config-input" id="color-method4" value="#ff6b6b" onchange="updateMethod4()">
-                            
-                            <label class="config-label">Position:</label>
-                            <select class="config-select" id="position-method4" onchange="updateMethod4()">
-                                <option value="bottom-right">Bottom Right</option>
-                                <option value="bottom-left" selected>Bottom Left</option>
-                                <option value="top-right">Top Right</option>
-                                <option value="top-left">Top Left</option>
-                            </select>
-                            
-                            <label class="config-label">Chat Title:</label>
-                            <input type="text" class="config-input" id="title-method4" value="Custom Assistant" onchange="updateMethod4()">
-                            
-                            <label class="config-label">Placeholder Text:</label>
-                            <input type="text" class="config-input" id="placeholder-method4" value="Ask me anything..." onchange="updateMethod4()">
-                        </div>
-                        
-                        <div class="code-output" id="code-method4">
-                            <div class="code-header">
-                                <span class="code-title">📄 Copy this code:</span>
-                                <button class="btn btn-copy" onclick="copyCode('method4')">
-                                    <span id="copy-text-method4">📋 Copy Code</span>
-                                </button>
-                            </div>
-                            <div id="code-content-method4"></div>
-                        </div>
-                        
-                        <div class="button-group">
-                            <button class="btn btn-primary" onclick="testMethod4()">
-                                ✨ Test This Method
-                            </button>
-                        </div>
-                        
-                        <div class="status-message status-success" id="status-method4"></div>
-                    </div>
-                </div>
-
-                <!-- Method 5: Auto-Open -->
-                <div class="method-card">
-                    <div class="method-header">
-                        <div class="method-number">METHOD 5</div>
-                        <div class="method-title">Auto-Open</div>
-                        <div class="method-description">Chat opens automatically when page loads - perfect for landing pages</div>
-                    </div>
-                    <div class="method-body">
-                        <div class="instruction-section">
-                            <h4>📋 How to Use:</h4>
-                            <ol>
-                                <li>This method automatically opens the chat when the page loads</li>
-                                <li>Great for landing pages or important announcements</li>
-                                <li>Copy the code and paste before <code>&lt;/body&gt;</code></li>
-                                <li>The chat will open automatically every time the page loads</li>
-                            </ol>
-                        </div>
-                        
-                        <div class="code-output" id="code-method5">
-                            <div class="code-header">
-                                <span class="code-title">📄 Copy this code:</span>
-                                <button class="btn btn-copy" onclick="copyCode('method5')">
-                                    <span id="copy-text-method5">📋 Copy Code</span>
-                                </button>
-                            </div>
-                            <div id="code-content-method5"></div>
-                        </div>
-                        
-                        <div class="button-group">
-                            <button class="btn btn-primary" onclick="testMethod5()">
-                                ✨ Test This Method
-                            </button>
-                        </div>
-                        
-                        <div class="status-message status-success" id="status-method5"></div>
-                    </div>
-                </div>
-
-                <!-- Method 6: Programmatic Control -->
-                <div class="method-card">
-                    <div class="method-header">
-                        <div class="method-number">METHOD 6</div>
-                        <div class="method-title">Programmatic Control</div>
-                        <div class="method-description">Control the chatbot with JavaScript - open from buttons, links, etc.</div>
-                    </div>
-                    <div class="method-body">
-                        <div class="instruction-section">
-                            <h4>📋 How to Use:</h4>
-                            <ol>
-                                <li>Copy and paste the initialization code before <code>&lt;/body&gt;</code></li>
-                                <li>The chatbot will be stored in <code>window.chatbotInstance</code></li>
-                                <li>You can then control it from anywhere:
-                                    <ul>
-                                        <li><code>window.chatbotInstance.open()</code> - Open the chat</li>
-                                        <li><code>window.chatbotInstance.close()</code> - Close the chat</li>
-                                        <li><code>window.chatbotInstance.sendMessage('Hello!')</code> - Send a message</li>
-                                    </ul>
-                                </li>
-                                <li>Perfect for custom buttons or triggers</li>
-                            </ol>
-                        </div>
-                        
-                        <div class="code-output" id="code-method6">
-                            <div class="code-header">
-                                <span class="code-title">📄 Copy this code:</span>
-                                <button class="btn btn-copy" onclick="copyCode('method6')">
-                                    <span id="copy-text-method6">📋 Copy Code</span>
-                                </button>
-                            </div>
-                            <div id="code-content-method6"></div>
-                        </div>
-                        
-                        <div class="button-group">
-                            <button class="btn btn-primary" onclick="testMethod6()">
-                                ✨ Test This Method
-                            </button>
-                            <button class="btn btn-secondary" onclick="if(window.chatbotInstance) window.chatbotInstance.open()">
-                                🚀 Open Programmatically
-                            </button>
-                        </div>
-                        
-                        <div class="status-message status-success" id="status-method6"></div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Debug Panel -->
-            <div class="debug-panel">
-                <h3>🔍 Debug Console</h3>
-                <div class="debug-log" id="debug-log">
-                    <div class="debug-message info">Ready to test integration methods...</div>
-                </div>
-            </div>
+        <div class="test-section">
+            <h2>Expected WebSocket URL</h2>
+            <p><strong>Should connect to:</strong> <code>wss://chat.alecasgari.com/ws/</code></p>
+            <p><strong>Should NOT connect to:</strong> <code>wss://chat.alecasgari.com:8080/</code></p>
+        </div>
+        
+        <div class="test-section">
+            <h2>Debug Console</h2>
+            <div id="debug-console"></div>
         </div>
     </div>
 
-    <!-- Widget Script -->
+    <script src="https://chat.alecasgari.com/widget.iife.js"></script>
     <script>
-        // Debug logging
+        let widgetInstance = null;
+
         function addDebug(message, type = 'info') {
-            const debugLog = document.getElementById('debug-log');
-            const messageDiv = document.createElement('div');
-            messageDiv.className = `debug-message ${type}`;
-            messageDiv.textContent = `[${new Date().toLocaleTimeString()}] ${message}`;
-            debugLog.appendChild(messageDiv);
-            debugLog.scrollTop = debugLog.scrollHeight;
-            console.log(`[${type.toUpperCase()}] ${message}`);
+            const console = document.getElementById('debug-console');
+            const div = document.createElement('div');
+            div.className = `console-entry status ${type}`;
+            div.textContent = `[${new Date().toLocaleTimeString()}] ${message}`;
+            console.appendChild(div);
+            console.scrollTop = console.scrollHeight;
         }
 
-        // Copy code function
-        function copyCode(method) {
-            const codeContent = document.getElementById(`code-content-${method}`).textContent;
-            navigator.clipboard.writeText(codeContent).then(() => {
-                const copyText = document.getElementById(`copy-text-${method}`);
-                copyText.textContent = '✅ Copied!';
-                document.querySelector(`#code-${method} .btn-copy`).classList.add('btn-copied');
+        function clearConsole() {
+            document.getElementById('debug-console').innerHTML = '';
+        }
+
+        function testWidget() {
+            addDebug('Initializing widget...', 'info');
+            
+            try {
+                // Clear existing widget
+                if (widgetInstance) {
+                    addDebug('Clearing existing widget...', 'info');
+                }
+
+                widgetInstance = new (window.AlecChatBot.default || window.AlecChatBot)({
+                    webhookUrl: 'https://n8n.alecasgari.com/webhook/2531f7c2-f516-435e-9f56-9ed98b3d673a',
+                    features: {
+                        resizable: true,
+                        typingAnimation: true,
+                        connectionStatus: true,
+                        autoOpen: false
+                    }
+                });
                 
-                setTimeout(() => {
-                    copyText.textContent = '📋 Copy Code';
-                    document.querySelector(`#code-${method} .btn-copy`).classList.remove('btn-copied');
-                }, 2000);
+                widgetInstance.init();
+                window.chatbotInstance = widgetInstance;
                 
-                addDebug(`Code for Method ${method.replace('method', '')} copied to clipboard`, 'success');
-            });
-        }
-
-        // Show status message
-        function showStatus(method, message) {
-            const statusEl = document.getElementById(`status-${method}`);
-            statusEl.textContent = message;
-            statusEl.style.display = 'block';
-            setTimeout(() => {
-                statusEl.style.display = 'none';
-            }, 3000);
-        }
-
-        // Destroy existing chatbot
-        function destroyExisting() {
-            if (window.chatbotInstance) {
-                window.chatbotInstance.destroy();
-                window.chatbotInstance = null;
-                addDebug('Previous chatbot instance destroyed', 'info');
+                addDebug('✅ Widget initialized successfully!', 'success');
+                document.getElementById('status').innerHTML = '<div class="status success">✅ Widget loaded successfully!</div>';
+                
+                // Check WebSocket connection after a short delay
+                setTimeout(testWebSocket, 2000);
+                
+            } catch (error) {
+                addDebug(`❌ Widget initialization failed: ${error.message}`, 'error');
+                document.getElementById('status').innerHTML = '<div class="status error">❌ Widget failed to load</div>';
             }
         }
 
-        // Generate code strings
-        function generateMethod1Code() {
-            return `<!-- Alec ChatBot Widget - Simple Integration -->
-<link rel="stylesheet" href="https://chat.alecasgari.com/widget.css">
-<script src="https://chat.alecasgari.com/widget.iife.js"></script>
-<script>
-  document.addEventListener('DOMContentLoaded', function() {
-    new (window.AlecChatBot.default || window.AlecChatBot)({
-      webhookUrl: 'https://n8n.alecasgari.com/webhook/2531f7c2-f516-435e-9f56-9ed98b3d673a'
-    }).init();
-  });
-</script>`;
-        }
-
-        function generateMethod2Code() {
-            return `<!-- Alec ChatBot Widget - One-liner Integration -->
-<link rel="stylesheet" href="https://chat.alecasgari.com/widget.css">
-<script src="https://chat.alecasgari.com/widget.iife.js" onload="new (window.AlecChatBot.default||window.AlecChatBot)({webhookUrl:'https://n8n.alecasgari.com/webhook/2531f7c2-f516-435e-9f56-9ed98b3d673a'}).init()"></script>`;
-        }
-
-        function generateMethod3Code() {
-            const color = document.getElementById('color-method3').value;
-            const title = document.getElementById('title-method3').value;
-            const placeholder = document.getElementById('placeholder-method3').value;
-            const position = document.getElementById('position-method3').value;
+        function testWebSocket() {
+            addDebug('Testing WebSocket connection...', 'info');
             
-            return `<!-- Alec ChatBot Widget - Advanced Integration -->
-<link rel="stylesheet" href="https://chat.alecasgari.com/widget.css">
-<script src="https://chat.alecasgari.com/widget.iife.js"></script>
-<script>
-  document.addEventListener('DOMContentLoaded', function() {
-    const chatbot = new (window.AlecChatBot.default || window.AlecChatBot)({
-      webhookUrl: 'https://n8n.alecasgari.com/webhook/2531f7c2-f516-435e-9f56-9ed98b3d673a',
-      theme: {
-        primaryColor: '${color}',
-        position: '${position}',
-        title: '${title}',
-        placeholder: '${placeholder}'
-      },
-      features: {
-        resizable: true,
-        typingAnimation: true,
-        connectionStatus: true,
-        autoOpen: false
-      },
-      callbacks: {
-        onMessage: function(message) {
-          console.log('User sent message:', message);
-          // Add your analytics code here
-          // Example: gtag('event', 'chat_message', {...});
-        },
-        onOpen: function() {
-          console.log('Chat opened');
-          // Track chat open event
-        },
-        onClose: function() {
-          console.log('Chat closed');
-        },
-        onError: function(error) {
-          console.error('Chatbot error:', error);
-        }
-      }
-    });
-    chatbot.init();
-  });
-</script>`;
-        }
-
-        function generateMethod4Code() {
-            const color = document.getElementById('color-method4').value;
-            const position = document.getElementById('position-method4').value;
-            const title = document.getElementById('title-method4').value;
-            const placeholder = document.getElementById('placeholder-method4').value;
-            
-            return `<!-- Alec ChatBot Widget - Custom Theme -->
-<link rel="stylesheet" href="https://chat.alecasgari.com/widget.css">
-<script src="https://chat.alecasgari.com/widget.iife.js"></script>
-<script>
-  document.addEventListener('DOMContentLoaded', function() {
-    new (window.AlecChatBot.default || window.AlecChatBot)({
-      webhookUrl: 'https://n8n.alecasgari.com/webhook/2531f7c2-f516-435e-9f56-9ed98b3d673a',
-      theme: {
-        primaryColor: '${color}',
-        position: '${position}',
-        title: '${title}',
-        placeholder: '${placeholder}'
-      }
-    }).init();
-  });
-</script>`;
-        }
-
-        function generateMethod5Code() {
-            return `<!-- Alec ChatBot Widget - Auto-Open -->
-<link rel="stylesheet" href="https://chat.alecasgari.com/widget.css">
-<script src="https://chat.alecasgari.com/widget.iife.js"></script>
-<script>
-  document.addEventListener('DOMContentLoaded', function() {
-    new (window.AlecChatBot.default || window.AlecChatBot)({
-      webhookUrl: 'https://n8n.alecasgari.com/webhook/2531f7c2-f516-435e-9f56-9ed98b3d673a',
-      features: {
-        autoOpen: true
-      }
-    }).init();
-  });
-</script>`;
-        }
-
-        function generateMethod6Code() {
-            return `<!-- Alec ChatBot Widget - Programmatic Control -->
-<link rel="stylesheet" href="https://chat.alecasgari.com/widget.css">
-<script src="https://chat.alecasgari.com/widget.iife.js"></script>
-<script>
-  document.addEventListener('DOMContentLoaded', function() {
-    const chatbot = new (window.AlecChatBot.default || window.AlecChatBot)({
-      webhookUrl: 'https://n8n.alecasgari.com/webhook/2531f7c2-f516-435e-9f56-9ed98b3d673a'
-    });
-    chatbot.init();
-    
-    // Store reference for external control
-    window.chatbotInstance = chatbot;
-  });
-  
-  // Example: Open chat from a button
-  // <button onclick="window.chatbotInstance.open()">Open Chat</button>
-  
-  // Example: Send message programmatically
-  // window.chatbotInstance.sendMessage('Hello!');
-</script>`;
-        }
-
-        // Update code displays
-        function updateMethod3() {
-            document.getElementById('code-content-method3').textContent = generateMethod3Code();
-        }
-
-        function updateMethod4() {
-            document.getElementById('code-content-method4').textContent = generateMethod4Code();
-        }
-
-        // Test methods
-        function testMethod1() {
-            destroyExisting();
-            addDebug('Testing Method 1: Simple Integration', 'info');
-            
-            const chatbot = new (window.AlecChatBot.default || window.AlecChatBot)({
-                webhookUrl: 'https://n8n.alecasgari.com/webhook/2531f7c2-f516-435e-9f56-9ed98b3d673a'
-            });
-            chatbot.init();
-            window.chatbotInstance = chatbot;
-            
-            showStatus('method1', '✅ Method 1 loaded successfully! Check the bottom-right corner.');
-            addDebug('Method 1 initialized successfully', 'success');
-        }
-
-        function testMethod2() {
-            destroyExisting();
-            addDebug('Testing Method 2: One-liner Integration', 'info');
-            
-            const chatbot = new (window.AlecChatBot.default || window.AlecChatBot)({
-                webhookUrl: 'https://n8n.alecasgari.com/webhook/2531f7c2-f516-435e-9f56-9ed98b3d673a'
-            });
-            chatbot.init();
-            window.chatbotInstance = chatbot;
-            
-            showStatus('method2', '✅ Method 2 loaded successfully! Check the bottom-right corner.');
-            addDebug('Method 2 initialized successfully', 'success');
-        }
-
-        function testMethod3() {
-            destroyExisting();
-            addDebug('Testing Method 3: Advanced Integration', 'info');
-            
-            const color = document.getElementById('color-method3').value;
-            const title = document.getElementById('title-method3').value;
-            const placeholder = document.getElementById('placeholder-method3').value;
-            const position = document.getElementById('position-method3').value;
-            
-            const chatbot = new (window.AlecChatBot.default || window.AlecChatBot)({
-                webhookUrl: 'https://n8n.alecasgari.com/webhook/2531f7c2-f516-435e-9f56-9ed98b3d673a',
-                theme: {
-                    primaryColor: color,
-                    position: position,
-                    title: title,
-                    placeholder: placeholder
-                },
-                features: {
-                    resizable: true,
-                    typingAnimation: true,
-                    connectionStatus: true,
-                    autoOpen: false
-                },
-                callbacks: {
-                    onMessage: (message) => addDebug(`Message sent: ${message}`, 'info'),
-                    onOpen: () => addDebug('Chat opened', 'success'),
-                    onClose: () => addDebug('Chat closed', 'info'),
-                    onError: (error) => addDebug(`Error: ${error}`, 'error')
+            if (widgetInstance) {
+                const wsConnected = widgetInstance.wsConnected;
+                const ws = widgetInstance.ws;
+                
+                if (ws) {
+                    const wsUrl = ws.url;
+                    addDebug(`WebSocket URL: ${wsUrl}`, 'info');
+                    
+                    if (wsUrl.includes('/ws/')) {
+                        addDebug('✅ WebSocket URL is correct (contains /ws/)', 'success');
+                    } else if (wsUrl.includes(':8080')) {
+                        addDebug('❌ WebSocket URL is WRONG (contains :8080)', 'error');
+                    } else {
+                        addDebug(`⚠️ WebSocket URL: ${wsUrl}`, 'info');
+                    }
                 }
-            });
-            chatbot.init();
-            window.chatbotInstance = chatbot;
-            
-            showStatus('method3', `✅ Method 3 loaded with custom settings! Color: ${color}, Position: ${position}`);
-            addDebug('Method 3 initialized successfully', 'success');
-        }
-
-        function testMethod4() {
-            destroyExisting();
-            addDebug('Testing Method 4: Custom Theme', 'info');
-            
-            const color = document.getElementById('color-method4').value;
-            const position = document.getElementById('position-method4').value;
-            const title = document.getElementById('title-method4').value;
-            const placeholder = document.getElementById('placeholder-method4').value;
-            
-            const chatbot = new (window.AlecChatBot.default || window.AlecChatBot)({
-                webhookUrl: 'https://n8n.alecasgari.com/webhook/2531f7c2-f516-435e-9f56-9ed98b3d673a',
-                theme: {
-                    primaryColor: color,
-                    position: position,
-                    title: title,
-                    placeholder: placeholder
+                
+                if (wsConnected) {
+                    addDebug('✅ WebSocket connected successfully!', 'success');
+                } else {
+                    addDebug('❌ WebSocket not connected', 'error');
+                    addDebug('This might be due to Nginx configuration or WebSocket server issues', 'info');
                 }
-            });
-            chatbot.init();
-            window.chatbotInstance = chatbot;
-            
-            showStatus('method4', `✅ Method 4 loaded! Custom theme applied - check ${position}`);
-            addDebug(`Method 4 initialized with color: ${color}, position: ${position}`, 'success');
-        }
-
-        function testMethod5() {
-            destroyExisting();
-            addDebug('Testing Method 5: Auto-Open', 'info');
-            
-            const chatbot = new (window.AlecChatBot.default || window.AlecChatBot)({
-                webhookUrl: 'https://n8n.alecasgari.com/webhook/2531f7c2-f516-435e-9f56-9ed98b3d673a',
-                features: {
-                    autoOpen: true
-                }
-            });
-            chatbot.init();
-            window.chatbotInstance = chatbot;
-            
-            showStatus('method5', '✅ Method 5 loaded! Chat will open automatically.');
-            addDebug('Method 5 initialized with auto-open enabled', 'success');
-        }
-
-        function testMethod6() {
-            destroyExisting();
-            addDebug('Testing Method 6: Programmatic Control', 'info');
-            
-            const chatbot = new (window.AlecChatBot.default || window.AlecChatBot)({
-                webhookUrl: 'https://n8n.alecasgari.com/webhook/2531f7c2-f516-435e-9f56-9ed98b3d673a'
-            });
-            chatbot.init();
-            window.chatbotInstance = chatbot;
-            
-            showStatus('method6', '✅ Method 6 loaded! Try the "Open Programmatically" button.');
-            addDebug('Method 6 initialized - chatbot stored in window.chatbotInstance', 'success');
+            } else {
+                addDebug('❌ Widget not initialized. Please initialize widget first.', 'error');
+            }
         }
 
         // Initialize on page load
-        function init() {
-            addDebug('Loading widget script...', 'info');
-            
-            const script = document.createElement('script');
-            script.src = 'https://chat.alecasgari.com/widget.iife.js';
-            script.onload = function() {
-                addDebug('Widget script loaded successfully', 'success');
-                
-                // Generate all code displays
-                document.getElementById('code-content-method1').textContent = generateMethod1Code();
-                document.getElementById('code-content-method2').textContent = generateMethod2Code();
-                updateMethod3();
-                updateMethod4();
-                document.getElementById('code-content-method5').textContent = generateMethod5Code();
-                document.getElementById('code-content-method6').textContent = generateMethod6Code();
-                
-                // Load default method
-                testMethod1();
-                
-                addDebug('All integration methods ready for testing', 'success');
-            };
-            script.onerror = function() {
-                addDebug('Failed to load widget script', 'error');
-            };
-            document.head.appendChild(script);
-        }
+        window.addEventListener('load', function() {
+            addDebug('Page loaded. Ready to test widget.', 'info');
+            addDebug('Expected WebSocket URL: wss://chat.alecasgari.com/ws/', 'info');
+        });
 
-        // Start
-        if (document.readyState === 'loading') {
-            document.addEventListener('DOMContentLoaded', init);
-        } else {
-            init();
-        }
+        // Monitor console for WebSocket errors
+        const originalError = console.error;
+        console.error = function(...args) {
+            const message = args.join(' ');
+            if (message.includes('WebSocket') || message.includes('ws://') || message.includes('wss://')) {
+                addDebug(`Console Error: ${message}`, 'error');
+            }
+            originalError.apply(console, args);
+        };
     </script>
 </body>
 </html>
