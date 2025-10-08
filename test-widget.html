@@ -6,199 +6,368 @@
     <title>Alec ChatBot Widget - Test Page</title>
     <link rel="stylesheet" href="https://chat.alecasgari.com/widget.css">
     <style>
-        body { 
-            font-family: Arial, sans-serif; 
-            margin: 20px; 
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
             background: #f5f5f5;
         }
-        .container { 
-            max-width: 800px; 
-            margin: 0 auto; 
+        .container {
+            max-width: 1100px;
+            margin: 0 auto;
             background: white;
             padding: 20px;
             border-radius: 8px;
             box-shadow: 0 2px 10px rgba(0,0,0,0.1);
         }
-        .test-section { 
-            margin: 20px 0; 
-            padding: 20px; 
-            border: 1px solid #ddd; 
-            border-radius: 8px; 
-            background: #f9f9f9;
-        }
-        button { 
-            background: #007bff; 
-            color: white; 
-            padding: 10px 20px; 
-            border: none; 
-            border-radius: 4px; 
-            cursor: pointer; 
-            margin: 5px;
-        }
-        button:hover { 
-            background: #0056b3; 
-        }
-        .status { 
-            margin: 10px 0; 
-            padding: 10px; 
-            border-radius: 4px; 
-        }
-        .success { 
-            background: #d4edda; 
-            color: #155724; 
-            border: 1px solid #c3e6cb; 
-        }
-        .error { 
-            background: #f8d7da; 
-            color: #721c24; 
-            border: 1px solid #f5c6cb; 
-        }
-        .info { 
-            background: #d1ecf1; 
-            color: #0c5460; 
-            border: 1px solid #bee5eb; 
-        }
-        #debug-console {
-            max-height: 300px;
-            overflow-y: auto;
+        .section {
+            margin: 24px 0;
+            padding: 20px;
             border: 1px solid #ddd;
-            padding: 10px;
-            background: #f8f9fa;
-            border-radius: 4px;
+            border-radius: 8px;
+            background: #fafafa;
         }
-        .console-entry {
-            margin: 5px 0;
-            padding: 5px;
-            border-radius: 3px;
-            font-family: monospace;
-            font-size: 12px;
-        }
+        .row { display: flex; gap: 16px; flex-wrap: wrap; }
+        .col { flex: 1 1 320px; min-width: 320px; }
+        .controls { display: flex; gap: 8px; flex-wrap: wrap; margin: 12px 0; }
+        .controls input, .controls select { padding: 8px; }
+        .btn { background: #007bff; color: #fff; padding: 8px 14px; border: 0; border-radius: 6px; cursor: pointer; }
+        .btn:hover { background: #0064cc; }
+        pre { background: #0f172a; color: #e2e8f0; padding: 14px; border-radius: 6px; overflow: auto; }
+        code { white-space: pre; }
+        .status { margin: 6px 0; padding: 8px; border-radius: 6px; }
+        .success { background: #e8faf0; border: 1px solid #bbf7d0; color: #166534; }
+        .error { background: #fef2f2; border: 1px solid #fecaca; color: #991b1b; }
+        .info { background: #eff6ff; border: 1px solid #bfdbfe; color: #1e40af; }
+        .badge { display:inline-block; background:#eef2ff; color:#3730a3; padding:2px 8px; border-radius:999px; font-size:12px; margin-left:8px; }
+        .debug { max-height: 260px; overflow:auto; border:1px solid #e5e7eb; border-radius:6px; padding:8px; background:#fff; font-family:monospace; font-size:12px; }
     </style>
 </head>
 <body>
-    <div class="container">
-        <h1>🚀 Alec ChatBot Widget - Test Page</h1>
-        
-        <div class="test-section">
-            <h2>WebSocket Connection Test</h2>
-            <p>This page tests the WebSocket connection with the updated URL.</p>
-            
-            <button onclick="testWidget()">Initialize Widget</button>
-            <button onclick="testWebSocket()">Check WebSocket Status</button>
-            <button onclick="clearConsole()">Clear Console</button>
-            
-            <div id="status"></div>
+<div class="container">
+    <h1>Alec ChatBot Widget - Integration Test <span class="badge">6 methods</span></h1>
+
+    <div class="section">
+        <h2>Widget & WebSocket Sanity</h2>
+        <p>
+            Expected WebSocket URL: <code>wss://chat.alecasgari.com/ws/</code> — Not <code>wss://chat.alecasgari.com:8080/</code>
+        </p>
+        <div class="controls">
+            <button class="btn" onclick="testWidget()">Initialize Widget</button>
+            <button class="btn" onclick="testWebSocket()">Check WebSocket</button>
+            <button class="btn" onclick="clearConsole()">Clear Console</button>
         </div>
-        
-        <div class="test-section">
-            <h2>Expected WebSocket URL</h2>
-            <p><strong>Should connect to:</strong> <code>wss://chat.alecasgari.com/ws/</code></p>
-            <p><strong>Should NOT connect to:</strong> <code>wss://chat.alecasgari.com:8080/</code></p>
-        </div>
-        
-        <div class="test-section">
-            <h2>Debug Console</h2>
-            <div id="debug-console"></div>
-        </div>
+        <div id="status"></div>
+        <div class="debug" id="debug-console"></div>
     </div>
 
-    <script src="https://chat.alecasgari.com/widget.iife.js"></script>
-    <script>
-        let widgetInstance = null;
+    <div class="section">
+        <h2>Method 1: Simple Integration</h2>
+        <div class="controls">
+            <button class="btn" onclick="renderMethod(1)">Render</button>
+            <button class="btn" onclick="copyMethod(1)">Copy</button>
+            <button class="btn" onclick="testMethod(1)">Test</button>
+            <span id="status-1"></span>
+        </div>
+        <pre><code id="code-1"></code></pre>
+    </div>
 
-        function addDebug(message, type = 'info') {
-            const console = document.getElementById('debug-console');
-            const div = document.createElement('div');
-            div.className = `console-entry status ${type}`;
-            div.textContent = `[${new Date().toLocaleTimeString()}] ${message}`;
-            console.appendChild(div);
-            console.scrollTop = console.scrollHeight;
+    <div class="section">
+        <h2>Method 2: One-liner</h2>
+        <div class="controls">
+            <button class="btn" onclick="renderMethod(2)">Render</button>
+            <button class="btn" onclick="copyMethod(2)">Copy</button>
+            <button class="btn" onclick="testMethod(2)">Test</button>
+            <span id="status-2"></span>
+        </div>
+        <pre><code id="code-2"></code></pre>
+    </div>
+
+    <div class="section">
+        <h2>Method 3: Advanced Integration (config)</h2>
+        <div class="row">
+            <div class="col">
+                <div class="controls">
+                    <input id="m3-color" type="color" value="#0ea5e9" />
+                    <select id="m3-position">
+                        <option value="bottom-right">bottom-right</option>
+                        <option value="bottom-left">bottom-left</option>
+                    </select>
+                    <input id="m3-title" type="text" placeholder="Title" value="Start here 👋" />
+                    <input id="m3-placeholder" type="text" placeholder="Placeholder" value="Type a message..." />
+                </div>
+                <div class="controls">
+                    <button class="btn" onclick="renderMethod(3)">Render</button>
+                    <button class="btn" onclick="copyMethod(3)">Copy</button>
+                    <button class="btn" onclick="testMethod(3)">Test</button>
+                    <span id="status-3"></span>
+                </div>
+            </div>
+        </div>
+        <pre><code id="code-3"></code></pre>
+    </div>
+
+    <div class="section">
+        <h2>Method 4: Custom Theme (minimal)</h2>
+        <div class="row">
+            <div class="col">
+                <div class="controls">
+                    <input id="m4-color" type="color" value="#22c55e" />
+                    <select id="m4-position">
+                        <option value="bottom-right">bottom-right</option>
+                        <option value="bottom-left">bottom-left</option>
+                    </select>
+                    <input id="m4-title" type="text" placeholder="Title" value="Online" />
+                    <input id="m4-placeholder" type="text" placeholder="Placeholder" value="Ask me anything" />
+                </div>
+                <div class="controls">
+                    <button class="btn" onclick="renderMethod(4)">Render</button>
+                    <button class="btn" onclick="copyMethod(4)">Copy</button>
+                    <button class="btn" onclick="testMethod(4)">Test</button>
+                    <span id="status-4"></span>
+                </div>
+            </div>
+        </div>
+        <pre><code id="code-4"></code></pre>
+    </div>
+
+    <div class="section">
+        <h2>Method 5: Auto-open</h2>
+        <div class="controls">
+            <button class="btn" onclick="renderMethod(5)">Render</button>
+            <button class="btn" onclick="copyMethod(5)">Copy</button>
+            <button class="btn" onclick="testMethod(5)">Test</button>
+            <span id="status-5"></span>
+        </div>
+        <pre><code id="code-5"></code></pre>
+    </div>
+
+    <div class="section">
+        <h2>Method 6: Programmatic control</h2>
+        <div class="controls">
+            <button class="btn" onclick="renderMethod(6)">Render</button>
+            <button class="btn" onclick="copyMethod(6)">Copy</button>
+            <button class="btn" onclick="testMethod(6)">Test</button>
+            <button class="btn" onclick="openProgrammatically()">Open Programmatically</button>
+            <span id="status-6"></span>
+        </div>
+        <pre><code id="code-6"></code></pre>
+    </div>
+</div>
+
+<script src="https://chat.alecasgari.com/widget.iife.js"></script>
+<script>
+    const WEBHOOK = 'https://n8n.alecasgari.com/webhook/2531f7c2-f516-435e-9f56-9ed98b3d673a';
+
+    let widgetInstance = null;
+
+    function addDebug(message, type = 'info') {
+        const c = document.getElementById('debug-console');
+        if (!c) return;
+        const div = document.createElement('div');
+        div.className = `status ${type}`;
+        div.textContent = `[${new Date().toLocaleTimeString()}] ${message}`;
+        c.appendChild(div);
+        c.scrollTop = c.scrollHeight;
+    }
+    function clearConsole() {
+        const c = document.getElementById('debug-console');
+        if (c) c.innerHTML = '';
+    }
+
+    // ——————— Sanity test ———————
+    function testWidget() {
+        try {
+            widgetInstance = new (window.AlecChatBot.default || window.AlecChatBot)({
+                webhookUrl: WEBHOOK,
+                features: { resizable: true, typingAnimation: true, connectionStatus: true, autoOpen: false }
+            });
+            widgetInstance.init();
+            window.chatbotInstance = widgetInstance;
+            document.getElementById('status').innerHTML = '<div class="status success">✅ Widget initialized</div>';
+            addDebug('Widget initialized');
+            setTimeout(testWebSocket, 1500);
+        } catch (err) {
+            document.getElementById('status').innerHTML = '<div class="status error">❌ Init failed</div>';
+            addDebug('Init failed: ' + err.message, 'error');
         }
-
-        function clearConsole() {
-            document.getElementById('debug-console').innerHTML = '';
+    }
+    function testWebSocket() {
+        if (!widgetInstance) { addDebug('Init first', 'error'); return; }
+        const ws = widgetInstance.ws;
+        const connected = widgetInstance.wsConnected;
+        if (ws && ws.url) {
+            addDebug('WS URL: ' + ws.url);
+            if (ws.url.includes('/ws/')) addDebug('✅ Correct WS path', 'success');
+            if (ws.url.includes(':8080')) addDebug('❌ Wrong WS port in URL', 'error');
         }
+        addDebug(connected ? '✅ WS connected' : '❌ WS not connected', connected ? 'success' : 'error');
+    }
 
-        function testWidget() {
-            addDebug('Initializing widget...', 'info');
-            
-            try {
-                // Clear existing widget
-                if (widgetInstance) {
-                    addDebug('Clearing existing widget...', 'info');
-                }
+    // ——————— Code generators (escape </script> as <\/script>) ———————
+    function genMethod1() {
+        return (
+`<link rel="stylesheet" href="https://chat.alecasgari.com/widget.css">
+<script src="https://chat.alecasgari.com/widget.iife.js"><\/script>
+<script>
+  const chatbot = new (window.AlecChatBot.default || window.AlecChatBot)({
+    webhookUrl: '${WEBHOOK}'
+  });
+  chatbot.init();
+<\/script>`
+        );
+    }
+    function genMethod2() {
+        return (
+`<script src="https://chat.alecasgari.com/widget.iife.js"><\/script>
+<script>
+  (new (window.AlecChatBot.default || window.AlecChatBot)({ webhookUrl: '${WEBHOOK}' })).init();
+<\/script>`
+        );
+    }
+    function genMethod3() {
+        const color = document.getElementById('m3-color').value;
+        const position = document.getElementById('m3-position').value;
+        const title = document.getElementById('m3-title').value;
+        const placeholder = document.getElementById('m3-placeholder').value;
+        return (
+`<link rel="stylesheet" href="https://chat.alecasgari.com/widget.css">
+<script src="https://chat.alecasgari.com/widget.iife.js"><\/script>
+<script>
+  const chatbot = new (window.AlecChatBot.default || window.AlecChatBot)({
+    webhookUrl: '${WEBHOOK}',
+    theme: { primaryColor: '${color}', position: '${position}', title: '${title}', placeholder: '${placeholder}' },
+    features: { resizable: true, typingAnimation: true, connectionStatus: true, autoOpen: false },
+    callbacks: {
+      onMessage: (m) => console.log('sent', m),
+      onOpen: () => console.log('open'),
+      onClose: () => console.log('close'),
+      onError: (e) => console.error('error', e)
+    }
+  });
+  chatbot.init();
+<\/script>`
+        );
+    }
+    function genMethod4() {
+        const color = document.getElementById('m4-color').value;
+        const position = document.getElementById('m4-position').value;
+        const title = document.getElementById('m4-title').value;
+        const placeholder = document.getElementById('m4-placeholder').value;
+        return (
+`<link rel="stylesheet" href="https://chat.alecasgari.com/widget.css">
+<script src="https://chat.alecasgari.com/widget.iife.js"><\/script>
+<script>
+  const chatbot = new (window.AlecChatBot.default || window.AlecChatBot)({
+    webhookUrl: '${WEBHOOK}',
+    theme: { primaryColor: '${color}', position: '${position}', title: '${title}', placeholder: '${placeholder}' }
+  });
+  chatbot.init();
+<\/script>`
+        );
+    }
+    function genMethod5() {
+        return (
+`<script src="https://chat.alecasgari.com/widget.iife.js"><\/script>
+<script>
+  const chatbot = new (window.AlecChatBot.default || window.AlecChatBot)({
+    webhookUrl: '${WEBHOOK}',
+    features: { autoOpen: true }
+  });
+  chatbot.init();
+<\/script>`
+        );
+    }
+    function genMethod6() {
+        return (
+`<script src="https://chat.alecasgari.com/widget.iife.js"><\/script>
+<script>
+  const chatbot = new (window.AlecChatBot.default || window.AlecChatBot)({ webhookUrl: '${WEBHOOK}' });
+  chatbot.init();
+  // later: chatbot.open(); chatbot.close();
+<\/script>`
+        );
+    }
 
-                widgetInstance = new (window.AlecChatBot.default || window.AlecChatBot)({
-                    webhookUrl: 'https://n8n.alecasgari.com/webhook/2531f7c2-f516-435e-9f56-9ed98b3d673a',
-                    features: {
-                        resizable: true,
-                        typingAnimation: true,
-                        connectionStatus: true,
-                        autoOpen: false
-                    }
+    function renderMethod(n) {
+        const el = document.getElementById('code-' + n);
+        const map = {1:genMethod1,2:genMethod2,3:genMethod3,4:genMethod4,5:genMethod5,6:genMethod6};
+        el.textContent = map[n]();
+    }
+    async function copyMethod(n) {
+        const el = document.getElementById('code-' + n);
+        // تبدیل <\/script> به </script> فقط هنگام کپی
+        const text = el.textContent.replaceAll('<\\/script>', '</script>');
+        await navigator.clipboard.writeText(text);
+        setStatus(n, '✅ Copied', 'success');
+        setTimeout(() => setStatus(n, ''), 1500);
+    }
+    function testMethod(n) {
+        try {
+            if (n === 1) {
+                const chatbot = new (window.AlecChatBot.default || window.AlecChatBot)({ webhookUrl: WEBHOOK });
+                chatbot.init();
+                window.chatbotInstance = chatbot;
+            }
+            if (n === 2) {
+                (new (window.AlecChatBot.default || window.AlecChatBot)({ webhookUrl: WEBHOOK })).init();
+            }
+            if (n === 3) {
+                const color = document.getElementById('m3-color').value;
+                const position = document.getElementById('m3-position').value;
+                const title = document.getElementById('m3-title').value;
+                const placeholder = document.getElementById('m3-placeholder').value;
+                const chatbot = new (window.AlecChatBot.default || window.AlecChatBot)({
+                    webhookUrl: WEBHOOK,
+                    theme: { primaryColor: color, position, title, placeholder },
+                    features: { resizable: true, typingAnimation: true, connectionStatus: true, autoOpen: false }
                 });
-                
-                widgetInstance.init();
-                window.chatbotInstance = widgetInstance;
-                
-                addDebug('✅ Widget initialized successfully!', 'success');
-                document.getElementById('status').innerHTML = '<div class="status success">✅ Widget loaded successfully!</div>';
-                
-                // Check WebSocket connection after a short delay
-                setTimeout(testWebSocket, 2000);
-                
-            } catch (error) {
-                addDebug(`❌ Widget initialization failed: ${error.message}`, 'error');
-                document.getElementById('status').innerHTML = '<div class="status error">❌ Widget failed to load</div>';
+                chatbot.init();
+                window.chatbotInstance = chatbot;
             }
+            if (n === 4) {
+                const color = document.getElementById('m4-color').value;
+                const position = document.getElementById('m4-position').value;
+                const title = document.getElementById('m4-title').value;
+                const placeholder = document.getElementById('m4-placeholder').value;
+                const chatbot = new (window.AlecChatBot.default || window.AlecChatBot)({
+                    webhookUrl: WEBHOOK,
+                    theme: { primaryColor: color, position, title, placeholder }
+                });
+                chatbot.init();
+                window.chatbotInstance = chatbot;
+            }
+            if (n === 5) {
+                const chatbot = new (window.AlecChatBot.default || window.AlecChatBot)({ webhookUrl: WEBHOOK, features: { autoOpen: true } });
+                chatbot.init();
+                window.chatbotInstance = chatbot;
+            }
+            if (n === 6) {
+                const chatbot = new (window.AlecChatBot.default || window.AlecChatBot)({ webhookUrl: WEBHOOK });
+                chatbot.init();
+                window.chatbotInstance = chatbot;
+            }
+            setStatus(n, '✅ Loaded. Check bottom-right.', 'success');
+        } catch (e) {
+            setStatus(n, '❌ Error: ' + e.message, 'error');
         }
-
-        function testWebSocket() {
-            addDebug('Testing WebSocket connection...', 'info');
-            
-            if (widgetInstance) {
-                const wsConnected = widgetInstance.wsConnected;
-                const ws = widgetInstance.ws;
-                
-                if (ws) {
-                    const wsUrl = ws.url;
-                    addDebug(`WebSocket URL: ${wsUrl}`, 'info');
-                    
-                    if (wsUrl.includes('/ws/')) {
-                        addDebug('✅ WebSocket URL is correct (contains /ws/)', 'success');
-                    } else if (wsUrl.includes(':8080')) {
-                        addDebug('❌ WebSocket URL is WRONG (contains :8080)', 'error');
-                    } else {
-                        addDebug(`⚠️ WebSocket URL: ${wsUrl}`, 'info');
-                    }
-                }
-                
-                if (wsConnected) {
-                    addDebug('✅ WebSocket connected successfully!', 'success');
-                } else {
-                    addDebug('❌ WebSocket not connected', 'error');
-                    addDebug('This might be due to Nginx configuration or WebSocket server issues', 'info');
-                }
-            } else {
-                addDebug('❌ Widget not initialized. Please initialize widget first.', 'error');
-            }
+    }
+    function openProgrammatically() {
+        if (window.chatbotInstance && window.chatbotInstance.open) {
+            window.chatbotInstance.open();
         }
+    }
 
-        // Initialize on page load
-        window.addEventListener('load', function() {
-            addDebug('Page loaded. Ready to test widget.', 'info');
-            addDebug('Expected WebSocket URL: wss://chat.alecasgari.com/ws/', 'info');
-        });
+    function setStatus(n, text = '', cls = '') {
+        const el = document.getElementById('status-' + n);
+        if (!el) return;
+        el.className = 'status ' + (cls || '');
+        el.textContent = text;
+    }
 
-        // Monitor console for WebSocket errors
-        const originalError = console.error;
-        console.error = function(...args) {
-            const message = args.join(' ');
-            if (message.includes('WebSocket') || message.includes('ws://') || message.includes('wss://')) {
-                addDebug(`Console Error: ${message}`, 'error');
-            }
-            originalError.apply(console, args);
-        };
-    </script>
+    window.addEventListener('load', () => {
+        addDebug('Ready. Render Method 1 by default.');
+        renderMethod(1);
+    });
+</script>
 </body>
 </html>
