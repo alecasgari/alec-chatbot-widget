@@ -203,7 +203,7 @@
         addDebug(connected ? '✅ WS connected' : '❌ WS not connected', connected ? 'success' : 'error');
     }
 
-    // ——————— Code generators (escape </script> as <\/script>) ———————
+    // ——————— Code generators (escape closing tag as <\/scr'+'ipt>) ———————
     function genMethod1() {
         return (
 `<link rel="stylesheet" href="https://chat.alecasgari.com/widget.css">
@@ -295,8 +295,9 @@
     }
     async function copyMethod(n) {
         const el = document.getElementById('code-' + n);
-        // تبدیل <\/script> به </script> فقط هنگام کپی
-        const text = el.textContent.replaceAll('<\\/script>', '</script>');
+        // تبدیل <\/script> به </script> فقط هنگام کپی (بدون گنجاندن مستقیم عبارت حساس در اسکریپت)
+        const closing = '</scr' + 'ipt>';
+        const text = el.textContent.replaceAll('<\/script>', closing);
         await navigator.clipboard.writeText(text);
         setStatus(n, '✅ Copied', 'success');
         setTimeout(() => setStatus(n, ''), 1500);
